@@ -34,14 +34,15 @@ COPY --from=frontend /app/public/build ./public/build
 # Install production PHP dependencies
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# Setup storage, cache & sqlite database
+# Setup storage, cache, public assets & sqlite database
 RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs \
     && touch database/database.sqlite \
-    && chown -R www-data:www-data storage bootstrap/cache database \
-    && chmod -R 775 storage bootstrap/cache database
+    && chown -R www-data:www-data storage bootstrap/cache database public \
+    && chmod -R 775 storage bootstrap/cache database \
+    && chmod -R 755 public
 
 # Expose port (default 8080 or PORT env var)
 EXPOSE 8080
 
 # Production startup script
-CMD php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan optimize:clear && php artisan migrate --force && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
