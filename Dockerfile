@@ -44,5 +44,4 @@ RUN mkdir -p database storage/framework/cache/data storage/framework/sessions st
 # Expose port (default 8080 or PORT env var)
 EXPOSE 8080
 
-# Production startup script
-CMD php artisan optimize:clear && php artisan migrate --force && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan migrate --force && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
